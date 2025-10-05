@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HTML 5 Boilerplate</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Login Basic Application</h1>
+    <a href="{% url 'login:register' %}">Register</a>
+    <br>
+    <a href="{% url 'login:login' %}">Login</a>
+    <h3>Required Features</h3>
+    <ol>
+      <li>User Registration</li>
+      <li>User Login</li>
+      <li>User Logout</li>
+      <li>Protect Pages</li>
+      <li>Password Reset</li>
+      <li>Basic Security</li>
+    </ol>
+
+    <h3>Stretch Features</h3>
+    <ol>
+      <li>JWT Token for React</li>
+      <li>Role-Based Access</li>
+      <li>Email Verification</li>
+      <li>Social Login(OAuth)</li>
+      <li>Two Factor Authentication</li>
+      <li>User Profile Management</li>
+    </ol>
+
+    <script src="index.js"></script>
+  </body>
+</html>
