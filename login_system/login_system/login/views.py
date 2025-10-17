@@ -6,6 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
+from .serializers import UserSerializer, RegisterSerializer
+
 
 def register(request):
     if request.method == "POST":
@@ -47,3 +54,43 @@ class CustomLoginView(LoginView):
 @login_required
 def dashboard(request):
     return render(request, 'login/dashboard.html')
+
+
+class RegisterView(generics.CreateAPIView):
+    """
+    POST /api/register/
+    Public endpoint - anyone can register.
+    Returns JWT tokens upon successful registration.
+    """
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)  # Don't require authentication
+    serializer_class = RegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Generate JWT tokens for the new user
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'user': UserSerializer(user).data,
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'message': 'User registered successfully'
+        }, status=status.HTTP_201_CREATED)
+
+
+class UserDetailView(generics.RetrieveAPIView):
+    """
+    GET /api/user/
+    Protected endpoint - requires valid JWT token.
+    Returns current user's information.
+    """
+    permission_classes = (IsAuthenticated,)  # Require valid JWT
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        # Returns the user from the JWT token
+        return self.request.user
